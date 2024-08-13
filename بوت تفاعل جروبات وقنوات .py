@@ -17,7 +17,7 @@ def start(message):
     if message.chat.type == 'private':
         C4_ = types.InlineKeyboardMarkup()
         C4_.row_width = 2
-        TC4 = types.InlineKeyboardButton(text="𝑫𝑬𝑽 𝑴𝒖𝒉𝒂𝒎𝒎𝒆𝒅", url="tg://user?id=5490392130")
+        TC4 = types.InlineKeyboardButton(text="𝑫𝑬𝑽 𝑴𝒖𝒉𝒂𝒎𝒎𝒆𝒅", url="tg://user?id=833360381")
         AIM = types.InlineKeyboardButton(text="ՏOᑌᖇᑕᗴ ᗩᒪIᑎᗩ", url="https://t.me/MGIMT")
         X = types.InlineKeyboardButton(text="Add me to a group", url="https://t.me/IQCPBOT?startgroup")
         HLTV = types.InlineKeyboardButton(text="Add me to a channel", url="https://t.me/IQCPBOT?startchannel")
