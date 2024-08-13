@@ -8,7 +8,7 @@ from telebot import types
 lost = pyfiglet.figlet_format('OWNER USER @F_R_A_O_N')
 print(lost)
 
-API_TOKEN = 'token'
+API_TOKEN = '7135965418:AAHO8PkH4lYcEjFzn9K_Z6TG_12vQ0jfMOI'
 
 bot = telebot.TeleBot(API_TOKEN)
 
@@ -17,13 +17,13 @@ def start(message):
     if message.chat.type == 'private':
         C4_ = types.InlineKeyboardMarkup()
         C4_.row_width = 2
-        TC4 = types.InlineKeyboardButton(text="𝐷𝐸𝑉 𝐹𝑅3𝑂𝑁", url="tg://user?id=5490392130")
-        AIM = types.InlineKeyboardButton(text="᥉᥆ᥙᖇᥴᥱ ƒᖇᥲ᥆ꪀ ", url="https://t.me/sorcefraon")
-        X = types.InlineKeyboardButton(text="Add me to a group", url="https://t.me/Nk_l_bot?startgroup")
-        HLTV = types.InlineKeyboardButton(text="Add me to a channel", url="https://t.me/Nk_l_bot?startchannel")
+        TC4 = types.InlineKeyboardButton(text="𝑫𝑬𝑽 𝑴𝒖𝒉𝒂𝒎𝒎𝒆𝒅", url="tg://user?id=5490392130")
+        AIM = types.InlineKeyboardButton(text="ՏOᑌᖇᑕᗴ ᗩᒪIᑎᗩ", url="https://t.me/MGIMT")
+        X = types.InlineKeyboardButton(text="Add me to a group", url="https://t.me/IQCPBOT?startgroup")
+        HLTV = types.InlineKeyboardButton(text="Add me to a channel", url="https://t.me/IQCPBOT?startchannel")
         C4_.add(AIM, TC4, X, HLTV)
         name_of_C4 = f"{message.from_user.first_name}"
-        text = f'''* مرحبا عزيزي {name_of_C4}, أنا بوت تفاعل برموز تعبيرية يمكنك إضافتي إلى مجموعة أو قناة للتفاعل *'''
+        text = f'''* بەخێربێی ئەزیزم {name_of_C4}, من بۆتی ڕیاکشنم کاردەکەم لە کەناڵ و گرووپەکان **'''
         bot.send_message(message.chat.id, text, reply_markup=C4_, parse_mode='Markdown')
 
 @bot.channel_post_handler()
