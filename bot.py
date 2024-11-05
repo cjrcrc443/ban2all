@@ -3,9 +3,8 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 
-SUDOERS = "7210848076"
 
-from pyrogram import Client
+SUDOERS = [7210848076, 987654321]  # Replace with actual Telegram user IDs of sudo users
 
 # Replace these with your own API ID and API hash
 API_ID = 12962251  # Your API ID from https://my.telegram.org
@@ -56,8 +55,9 @@ async def ban_members(chat_id, user_id, bot_permission, total_members, msg):
     )
 
 
-@bot.on_message(filters.command(["banall", "kickall"]) & SUDOERS)
+@bot.on_message(filters.command(["banall", "kickall"]) & filters.user(SUDOERS))
 async def ban_all(client, msg):
+    # Your existing code here
     chat_id = msg.chat.id
     user_id = msg.from_user.id  # ID of the user who issued the command
     bot_info = await client.get_me()
