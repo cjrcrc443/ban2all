@@ -3,6 +3,8 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 
+SUDOERS = "7210848076"
+
 # Initialize the bot client
 bot = Client("banall", api_id=12962251, api_hash=b51499523800add51e4530c6f552dbc8, bot_token=7951655243:AAGs5da9H4uxAw2u27bBBQ0ms1S5e19co1A)
 
