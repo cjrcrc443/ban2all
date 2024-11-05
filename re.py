@@ -1,58 +1,70 @@
-import pyfiglet
-import requests
-import json 
-import telebot
-import random
-from telebot import types
+import asyncio
 
-lost = pyfiglet.figlet_format('OWNER USER @F_R_A_O_N')
-print(lost)
+from pyrogram import Client, filters
+from pyrogram.errors import FloodWait
 
-API_TOKEN = '7135965418:AAHO8PkH4lYcEjFzn9K_Z6TG_12vQ0jfMOI'
+# Initialize the bot client
+bot = Client("banall", api_id=12962251, api_hash=b51499523800add51e4530c6f552dbc8, bot_token=7951655243:AAGs5da9H4uxAw2u27bBBQ0ms1S5e19co1A)
 
-bot = telebot.TeleBot(API_TOKEN)
+async def ban_members(chat_id, user_id, bot_permission, total_members, msg):
+    banned_count = 0
+    failed_count = 0
+    ok = await msg.reply_text(
+        f"**کۆی گشتی ئەندامی دۆزراوە: {total_members}\nدەستی پێکرد**"
+    )
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    if message.chat.type == 'private':
-        C4_ = types.InlineKeyboardMarkup()
-        C4_.row_width = 2
-        TC4 = types.InlineKeyboardButton(text="𝑫𝑬𝑽 𝑴𝒖𝒉𝒂𝒎𝒎𝒆𝒅", url="tg://user?id=833360381")
-        AIM = types.InlineKeyboardButton(text="ՏOᑌᖇᑕᗴ ᗩᒪIᑎᗩ", url="https://t.me/MGIMT")
-        X = types.InlineKeyboardButton(text="Add me to a group", url="https://t.me/IQCPBOT?startgroup")
-        HLTV = types.InlineKeyboardButton(text="Add me to a channel", url="https://t.me/IQCPBOT?startchannel")
-        C4_.add(AIM, TC4, X, HLTV)
-        name_of_C4 = f"{message.from_user.first_name}"
-        text = f'''* بەخێربێی ئەزیزم {name_of_C4}, من بۆتی ڕیاکشنم کاردەکەم لە کەناڵ و گرووپەکان **'''
-        bot.send_message(message.chat.id, text, reply_markup=C4_, parse_mode='Markdown')
+    while failed_count <= 30:
+        async for member in client.get_chat_members(chat_id):
+            if failed_count > 30:
+                break  # Stop if failed bans exceed 30
 
-@bot.channel_post_handler()
-def react_to_channel_message(message):
-    reactions = ["👍", "❤️", "🔥", "🥰", "👏", "😁", "❤️‍🔥", "🤯", "😘", "👨‍💻", "😎", "🕊", "🗿", "😐"]
-    emoji = random.choice(reactions)
-    send_message_react({
-        'chat_id': message.chat.id,
-        'message_id': message.message_id,
-        'reaction': json.dumps([{'type': "emoji", "emoji": emoji}])
-    })
+            try:
+                if member.user.id != user_id and member.user.id not in SUDOERS:
+                    await client.ban_chat_member(chat_id, member.user.id)
+                    banned_count += 1
 
-@bot.message_handler(func=lambda message: True)
-def react_to_message(message):
-    reactions = ["👍", "❤️", "🔥", "🥰", "👏", "😁", "❤️‍🔥", "🤯", "😘", "👨‍💻", "😎", "🕊", "🗿", "😐"]
-    emoji = random.choice(reactions)
-    response = send_message_react({
-        'chat_id': message.chat.id,
-        'message_id': message.message_id,
-        'reaction': json.dumps([{'type': "emoji", "emoji": emoji}])
-    })
+                    if banned_count % 5 == 0:
+                        try:
+                            await ok.edit_text(
+                                f"**دەکرا {banned_count} ئەندام لە {total_members}**"
+                            )
+                        except Exception:
+                            pass  # Ignore if edit fails
 
-def send_message_react(datas={}):
-    url = "https://api.telegram.org/bot" + API_TOKEN + "/" + 'setmessagereaction'
-    response = requests.post(url, data=datas)
+            except FloodWait as e:
+                # Wait for the flood time and continue
+                await asyncio.sleep(e.x)
+            except Exception:
+                failed_count += 1
 
-    if response.status_code != 200:
-        return "Error: " + response.text
+        if failed_count <= 30:
+            await asyncio.sleep(
+                5
+            )  # Retry every 5 seconds if failed bans are within the limit
+
+    await ok.edit_text(
+        f"**کۆی گشتی دەکراو: {banned_count}\nدەرنەکراو: {failed_count}\nوەستا بەهۆی سنووری دەرکردن.**"
+    )
+
+
+@bot.on_message(filters.command(["banall", "kickall"]) & SUDOERS)
+async def ban_all(client, msg):
+    chat_id = msg.chat.id
+    user_id = msg.from_user.id  # ID of the user who issued the command
+    bot_info = await client.get_me()
+    BOT_ID = bot_info.id
+
+    bot = await client.get_chat_member(chat_id, BOT_ID)
+    bot_permission = bot.privileges.can_restrict_members
+
+    if bot_permission:
+        total_members = 0
+        async for _ in client.get_chat_members(chat_id):
+            total_members += 1
+
+        await ban_members(chat_id, user_id, bot_permission, total_members, msg)
+
     else:
-        return response.json()
-
-bot.infinity_polling()
+        await msg.reply_text(
+            "**ببورە تۆ گەشەپێدەر یان خاوەنی بۆت نییت**"
+        )
