@@ -5,8 +5,15 @@ from pyrogram.errors import FloodWait
 
 SUDOERS = "7210848076"
 
+from pyrogram import Client
+
+# Replace these with your own API ID and API hash
+API_ID = 12962251  # Your API ID from https://my.telegram.org
+API_HASH = "b51499523800add51e4530c6f552dbc8"  # Your API hash from https://my.telegram.org
+BOT_TOKEN = "7951655243:AAGs5da9H4uxAw2u27bBBQ0ms1S5e19co1A"  # Your bot token from @BotFather
+
 # Initialize the bot client
-bot = Client("banall", api_id=12962251, api_hash=b51499523800add51e4530c6f552dbc8, bot_token=7951655243:AAGs5da9H4uxAw2u27bBBQ0ms1S5e19co1A)
+bot = Client("banall", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 async def ban_members(chat_id, user_id, bot_permission, total_members, msg):
     banned_count = 0
