@@ -77,3 +77,6 @@ async def ban_all(client, msg):
         await msg.reply_text(
             "**ببورە تۆ گەشەپێدەر یان خاوەنی بۆت نییت**"
         )
+
+print("Running!")
+bot.run()
