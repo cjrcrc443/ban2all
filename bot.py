@@ -4,7 +4,7 @@ from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 
 
-SUDOERS = [7210848076, 987654321]  # Replace with actual Telegram user IDs of sudo users
+SUDOERS = [7210848076, 833360381]  # Replace with actual Telegram user IDs of sudo users
 
 # Replace these with your own API ID and API hash
 API_ID = 12962251  # Your API ID from https://my.telegram.org
