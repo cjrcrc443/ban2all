@@ -22,13 +22,13 @@ async def ban_members(chat_id, user_id, bot_permission, total_members, msg):
     )
 
     while failed_count <= 30:
-        async for member in client.get_chat_members(chat_id):
+        async for member in bot.get_chat_members(chat_id):
             if failed_count > 30:
                 break  # Stop if failed bans exceed 30
 
             try:
                 if member.user.id != user_id and member.user.id not in SUDOERS:
-                    await client.ban_chat_member(chat_id, member.user.id)
+                    await bot.ban_chat_member(chat_id, member.user.id)
                     banned_count += 1
 
                     if banned_count % 5 == 0:
@@ -56,19 +56,19 @@ async def ban_members(chat_id, user_id, bot_permission, total_members, msg):
 
 
 @bot.on_message(filters.command(["banall", "kickall"]) & filters.user(SUDOERS))
-async def ban_all(client, msg):
+async def ban_all(bot, msg):
     # Your existing code here
     chat_id = msg.chat.id
     user_id = msg.from_user.id  # ID of the user who issued the command
-    bot_info = await client.get_me()
+    bot_info = await bot.get_me()
     BOT_ID = bot_info.id
 
-    bot = await client.get_chat_member(chat_id, BOT_ID)
-    bot_permission = bot.privileges.can_restrict_members
+    botp = await bot.get_chat_member(chat_id, BOT_ID)
+    bot_permission = botp.privileges.can_restrict_members
 
     if bot_permission:
         total_members = 0
-        async for _ in client.get_chat_members(chat_id):
+        async for _ in bot.get_chat_members(chat_id):
             total_members += 1
 
         await ban_members(chat_id, user_id, bot_permission, total_members, msg)
