@@ -6,7 +6,7 @@ SUDOERS = [7210848076, 833360381, 7265466776]  # Replace with actual Telegram us
 
 API_ID = 12962251  # Your API ID from https://my.telegram.org
 API_HASH = "b51499523800add51e4530c6f552dbc8"  # Your API hash
-BOT_TOKEN = "7951655243:AAGs5da9H4uxAw2u27bBBQ0ms1S5e19co1A"  # Your bot token
+BOT_TOKEN = "7951655243:AAEhAgfvcs1zFS3Ft3CcchNl1ZMaMCPWsh0"  # Your bot token
 
 bot = Client("banall", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
