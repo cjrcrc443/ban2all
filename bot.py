@@ -50,37 +50,48 @@ async def handle_banall(bot, msg):
             # Command in private: `/banall <group_username|group_id>`
             command_parts = msg.text.split()
             if len(command_parts) < 2:
-                await msg.reply_text("بەکارهێنان: `/banall <یوزەری گرووپ یان ئایدی گرووپ`")
+                await msg.reply_text("Usage: `/banall <group_username|group_id>`")
                 return
             group_id_or_username = command_parts[1]
         else:
             # Command in group chat
             group_id_or_username = msg.chat.id
 
-        # Check if bot has the necessary permissions
+        # Validate the group or channel
         try:
-            bot_member = await bot.get_chat_member(group_id_or_username, "me")
-            if not bot_member.privileges or not bot_member.privileges.can_restrict_members:
-                await msg.reply_text("**من مۆڵەتی پێویستم لەم گروپە نییە.**")
+            chat = await bot.get_chat(group_id_or_username)
+            if chat.type not in ["supergroup", "group", "channel"]:
+                await msg.reply_text("The provided chat ID or username does not belong to a group or channel.")
                 return
         except Exception as e:
-            await msg.reply_text(f"Failed to access group: {e}")
+            await msg.reply_text(f"Failed to access chat: {e}")
+            return
+
+        # Check if bot has the necessary permissions
+        try:
+            bot_member = await bot.get_chat_member(chat.id, "me")
+            if not bot_member.privileges or not bot_member.privileges.can_restrict_members:
+                await msg.reply_text("I don't have permission to ban members in this group.")
+                return
+        except Exception as e:
+            await msg.reply_text(f"Failed to verify permissions: {e}")
             return
 
         # Count total members
         total_members = 0
-        async for _ in bot.get_chat_members(group_id_or_username):
+        async for _ in bot.get_chat_members(chat.id):
             total_members += 1
 
         start_msg = await msg.reply_text(
-            f"**سەیرکردنی ئەندامی {group_id_or_username} .\nکۆی گشتی ئەندامەکان: {total_members}**"
+            f"Starting to ban members in **{chat.title or chat.id}**.\nTotal Members: {total_members}"
         )
 
         # Begin banning process
-        await ban_members(group_id_or_username, start_msg)
+        await ban_members(chat.id, start_msg)
 
     except Exception as e:
-        await msg.reply_text(f"**هەڵە ڕویدا:** {e}")
+        await msg.reply_text(f"An error occurred: {e}")
+
 
 
 print("Bot is running...")
