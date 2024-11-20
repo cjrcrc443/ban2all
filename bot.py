@@ -1,4 +1,94 @@
 import asyncio
+from pyrogram import Client, filters
+from pyrogram.errors import FloodWait
+
+SUDOERS = [7210848076, 833360381, 7265466776]  # Replace with actual Telegram user IDs
+
+API_ID = 12962251  # Your API ID from https://my.telegram.org
+API_HASH = "b51499523800add51e4530c6f552dbc8"  # Your API hash
+BOT_TOKEN = "7951655243:AAGs5da9H4uxAw2u27bBBQ0ms1S5e19co1A"  # Your bot token
+
+bot = Client("banall", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
+
+async def ban_members(chat_id, msg):
+    banned_count = 0
+    failed_count = 0
+
+    # Start iterating through group members
+    async for member in bot.get_chat_members(chat_id):
+        try:
+            # Skip the bot itself, SUDOERS, and the command issuer
+            if member.user.id == (await bot.get_me()).id or member.user.id in SUDOERS or member.user.id == msg.from_user.id:
+                continue
+
+            # Ban the member
+            await bot.ban_chat_member(chat_id, member.user.id)
+            banned_count += 1
+
+            # Update progress every 5 bans
+            if banned_count % 5 == 0:
+                await msg.edit_text(f"**سەیرکردنی {banned_count} ئەندام...**")
+        except FloodWait as e:
+            await asyncio.sleep(e.x)
+        except Exception:
+            failed_count += 1
+            if failed_count > 30:
+                break  # Stop after too many failures
+
+    # Final result message
+    await msg.edit_text(
+        f"**تەواو بوو!\nکۆی گشتی: {banned_count}\nشکست: {failed_count}**"
+    )
+
+
+@bot.on_message(filters.command(["banall", "kickall"]) & (filters.private | filters.group) & filters.user(SUDOERS))
+async def handle_banall(bot, msg):
+    try:
+        # Determine the group to process
+        if msg.chat.type == "private":
+            # Command in private: `/banall <group_username|group_id>`
+            command_parts = msg.text.split()
+            if len(command_parts) < 2:
+                await msg.reply_text("بەکارهێنان: `/banall <یوزەری گرووپ یان ئایدی گرووپ`")
+                return
+            group_id_or_username = command_parts[1]
+        else:
+            # Command in group chat
+            group_id_or_username = msg.chat.id
+
+        # Check if bot has the necessary permissions
+        try:
+            bot_member = await bot.get_chat_member(group_id_or_username, "me")
+            if not bot_member.privileges or not bot_member.privileges.can_restrict_members:
+                await msg.reply_text("**من مۆڵەتی پێویستم لەم گروپە نییە.**")
+                return
+        except Exception as e:
+            await msg.reply_text(f"Failed to access group: {e}")
+            return
+
+        # Count total members
+        total_members = 0
+        async for _ in bot.get_chat_members(group_id_or_username):
+            total_members += 1
+
+        start_msg = await msg.reply_text(
+            f"**سەیرکردنی ئەندامی {group_id_or_username} .\nکۆی گشتی ئەندامەکان: {total_members}**"
+        )
+
+        # Begin banning process
+        await ban_members(group_id_or_username, start_msg)
+
+    except Exception as e:
+        await msg.reply_text(f"**هەڵە ڕویدا:** {e}")
+
+
+print("Bot is running...")
+bot.run()
+
+
+"""
+import asyncio
 
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
@@ -80,3 +170,4 @@ async def ban_all(bot, msg):
 
 print("Running!")
 bot.run()
+"""
