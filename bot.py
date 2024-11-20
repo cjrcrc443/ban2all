@@ -33,7 +33,7 @@ async def ban_members(chat_id, user_id, bot_permission, total_members, msg):
                     if banned_count % 5 == 0:
                         try:
                             await ok.edit_text(
-                                f"**دەکرا {banned_count} ئەندام لە {total_members}**"
+                                f"**بینرا {banned_count} ئەندام لە {total_members}**"
                             )
                         except Exception:
                             pass  # Ignore if edit fails
@@ -50,7 +50,7 @@ async def ban_members(chat_id, user_id, bot_permission, total_members, msg):
             )  # Retry every 5 seconds if failed bans are within the limit
 
     await ok.edit_text(
-        f"**کۆی گشتی دەکراو: {banned_count}\nدەرنەکراو: {failed_count}\nوەستا بەهۆی سنووری دەرکردن.**"
+        f"**کۆی گشتی ئەندام: {banned_count}\nشکست: {failed_count}\nوەستا بەهۆی سنوور.**"
     )
 
 
@@ -85,12 +85,12 @@ async def ban_all(bot, msg):
             await ban_members(chat_id, msg.from_user.id, bot_permission, total_members, msg)
 
         else:
-            await msg.reply_text("**ببورە بۆتەکە ناتوانێ ئەم کردارە بکات.**")
+            await msg.reply_text("**ببورە بۆتەکە مافی نییە لە گرووپەکە.**")
 
     except PeerIdInvalid:
         await msg.reply_text("**گروپەکە نادروستە یان بۆتەکەی تێدانییە.**")
     except ChatAdminRequired:
-        await msg.reply_text("**ببورە بۆتەکە مافی نییە لە گروپەکە.**")
+        await msg.reply_text("**ببورە بۆتەکە ئەدمین نییە لە گرووپەکە.**")
     except Exception as e:
         await msg.reply_text(f"**هەڵە ڕوویدا: {str(e)}**")
 
